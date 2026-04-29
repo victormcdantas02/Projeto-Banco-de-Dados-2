@@ -1,0 +1,10 @@
+CREATE DATABASE loja;
+USE loja;
+
+CREATE TABLE cliente(
+ID INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(30) NOT NULL,
+idade INT NOT NULL;
+sexo BOOLEAN;
+data_nascimento DATE;
+);

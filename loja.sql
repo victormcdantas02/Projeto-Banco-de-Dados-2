@@ -12,8 +12,8 @@ data_nascimento DATE,
 CREATE TABLE vendedor(
   id_vendedor INT PRIMARY KEY AUTO_INCREMENT,
   nome VARCHAR(30) NOT NULL,
-  causa_social,
-  tipo,
+  causa_social VARCHAR,
+  tipo VARCHAR,
   nota_media DECIMAL,
   );
 
@@ -21,15 +21,15 @@ CREATE TABLE produto(
  id_produto INT PRIMARY KEY AUTO_INCREMENT,
  nome VARCHAR(30) NOT NULL,
  descricao TEXT,
- quantidade_estoque,
- valor,
+ quantidade_estoque INT NOT NULL,
+ valor DECIMAL,
  observacoes TEXT,
  );
 
 CREATE TABLE transportadora(
     id_transportadora INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(30) NOT NULL,
-    cidade,
+    cidade VARCHAR(50) NOT NULL,
   );
 
 

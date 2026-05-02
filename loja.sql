@@ -17,7 +17,7 @@ CREATE TABLE cliente_especial(
 
 CREATE TABLE produto(
   id_produto INT PRIMARY KEY AUTO_INCREMENT,
-  nome VARCHAR(30) NOT NULL,
+  nome VARCHAR(100) NOT NULL,
   descricao TEXT,
   quantidade_estoque INT NOT NULL,
   valor DECIMAL(10,2),

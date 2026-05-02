@@ -14,7 +14,7 @@ CREATE TABLE vendedor(
   nome VARCHAR(30) NOT NULL,
   causa_social VARCHAR,
   tipo VARCHAR,
-  nota_media DECIMAL,
+  nota_media DECIMAL(3,2),
   );
 
 CREATE TABLE produto(
@@ -22,7 +22,7 @@ CREATE TABLE produto(
  nome VARCHAR(30) NOT NULL,
  descricao TEXT,
  quantidade_estoque INT NOT NULL,
- valor DECIMAL,
+ valor DECIMAL(10,2),
  observacoes TEXT,
  );
 
@@ -31,5 +31,18 @@ CREATE TABLE transportadora(
     nome VARCHAR(30) NOT NULL,
     cidade VARCHAR(50) NOT NULL,
   );
+
+CREATE TABLE venda(
+    id_venda INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    id_produto INT,
+    id_transportadora INT,
+    data_hora DATETIME,
+    endereco TEXT,
+    valor_frete DECIMAL(10,2),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+    FOREIGN KEY (id_produto) REFERENCES produto(id_produto),
+    FOREIGN KEY (id_transportadora) REFERENCES transportadora(id_transportadora)
+);
 
 

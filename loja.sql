@@ -21,7 +21,7 @@ CREATE TABLE produto(
   descricao TEXT,
   quantidade_estoque INT NOT NULL,
   valor DECIMAL(10,2),
-   observacoes TEXT
+  observacoes TEXT
 );
 
 CREATE TABLE vendedor(
@@ -99,3 +99,14 @@ VALUES /*fiz categorias e observações mais variavies.*/
 ('Nevermind', 'Nirvana, 1991, Grunge, capa com bebê na piscina', 7, 190.00, 'Explosão do grunge'),
 ('Rumours', 'Fleetwood Mac, 1977, Rock, edição limitada', 9, 160.00, 'Sucesso de vendas'),
 ('Thriller', 'Michael Jackson, 1982, Pop, álbum mais vendido da história', 12, 200.00, 'Inclui Billie Jean e Beat It');
+
+//view que criei para mostrar um top 3 de mais vendidos, tem que testar
+
+CREATE VIEW visao_top3_vendas AS
+SELECT p.id_produto, p.nome, p.valor,
+COUNT (v.id_venda) AS total_vendas
+FROM produto p
+LEFT JOIN venda v ON p.id_produto =  v.id_produto
+GROUP BY p.id_produto, p.nome.valor
+ORDER BY total_vendas DESC
+LIMIT 3;

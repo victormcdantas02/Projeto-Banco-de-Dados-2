@@ -15,16 +15,6 @@ CREATE TABLE cliente_especial(
   FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
-CREATE TABLE produto(
-  id_produto INT PRIMARY KEY AUTO_INCREMENT,
-  nome VARCHAR(100) NOT NULL,
-  categoria VARCHAR(50) NOT NULL, -- Ex: "MPB", "Rock Nacional", "Internacional", etc.
-  descricao TEXT,
-  quantidade_estoque INT NOT NULL,
-  valor DECIMAL(10,2),
-  observacoes TEXT
-);
-
 CREATE TABLE vendedor(
   id_vendedor INT PRIMARY KEY AUTO_INCREMENT,
   nome VARCHAR(30) NOT NULL,
@@ -39,6 +29,18 @@ CREATE TABLE vendedor_especial(
   FOREIGN KEY (id_vendedor) REFERENCES vendedor(id_vendedor)
 );
 
+CREATE TABLE produto(
+  id_produto INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100) NOT NULL,
+  categoria VARCHAR(50) NOT NULL, -- Ex: "MPB", "Rock Nacional", "Internacional", etc.
+  descricao TEXT,
+  quantidade_estoque INT NOT NULL,
+  valor DECIMAL(10,2),
+  observacoes TEXT
+  id_vendedor INT,
+  FOREIGN KEY (id_vendedor) REFERENCES vendedor(id_vendedor)
+);
+
 CREATE TABLE transportadora(
     id_transportadora INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(30) NOT NULL,
@@ -50,6 +52,7 @@ CREATE TABLE venda(
   id_cliente INT,
   id_produto INT,
   id_transportadora INT,
+  id_vendedor INT,
   data_hora DATETIME,
   endereco TEXT,
   valor_frete DECIMAL(10,2),
@@ -113,19 +116,12 @@ VALUES
 
 -- Aqui usei endereços fictícios, e o frete é calculado de forma aleatória, mas tem um valor razoavél.
 INSERT INTO venda (id_cliente, id_produto, id_transportadora, id_vendedor, data_hora, endereco, valor_frete)
-VALUES (1, 1, 1, 2, NOW(), 'Rua do Amparo, Olinda - PE', 20.00);
-
-INSERT INTO venda (id_cliente, id_produto, id_transportadora, id_vendedor, data_hora, endereco, valor_frete)
-VALUES (2, 6, 2, 1, NOW(), 'Rua da Boa Hora, Olinda - PE', 25.00);
-
-INSERT INTO venda (id_cliente, id_produto, id_transportadora, id_vendedor, data_hora, endereco, valor_frete)
-VALUES (3, 17, 3, 4, NOW(), 'Rua da Aurora, Recife - PE', 15.00);
-
-INSERT INTO venda (id_cliente, id_produto, id_transportadora, id_vendedor, data_hora, endereco, valor_frete)
-VALUES (4, 13, 4, 1, NOW(), 'Rua do Sol, Recife - PE', 30.00);
-
-INSERT INTO venda (id_cliente, id_produto, id_transportadora, id_vendedor, data_hora, endereco, valor_frete)
-VALUES (5, 20, 5, 2, NOW(), 'Rua de São Bento, Olinda - PE', 18.00);
+VALUES
+(1, 1, 1, 2, NOW(), 'Rua do Amparo, Olinda - PE', 20.00),
+(2, 6, 2, 1, NOW(), 'Rua da Boa Hora, Olinda - PE', 25.00),
+(3, 17, 3, 4, NOW(), 'Rua da Aurora, Recife - PE', 15.00),
+(4, 13, 4, 3, NOW(), 'Rua do Sol, Recife - PE', 30.00),
+(5, 20, 5, 5, NOW(), 'Rua de São Bento, Olinda - PE', 18.00);
 
 
 /*view que criei para mostrar um top 3 de mais vendidos, tem que testar*/
@@ -140,6 +136,23 @@ GROUP BY p.id_produto, p.nome, p.valor
 ORDER BY total_vendas DESC
 LIMIT 3;
 
+/*Criei uma view da visão do cliente e vendas onde ele pode ver o total das comprars ja foi testado*/
+
+CREATE VIEW visao_cliente_vendas AS
+SELECT c.nome AS cliente,
+COUNT(v.id_venda) AS total_compras
+FROM cliente c
+LEFT JOIN venda v ON c.id_cliente = v.id_cliente
+GROUP BY c.nome;
+
+/*Visão do vendedor sobre as sua vendas, ja foi testado tbm*/
+CREATE VIEW visao_vendedor_vendas AS
+SELECT ve.nome AS vendedor,
+SUM(p.valor) AS total_vendido
+FROM venda v
+JOIN vendedor ve ON v.id_vendedor = ve.id_vendedor
+JOIN produto p ON v.id_produto = p.id_produto
+GROUP BY ve.nome;
 
 -- Fiz a Trigger para validar a especialidade do vendedor.
 DELIMITER //
@@ -166,3 +179,67 @@ BEGIN
   END;
     //
 DELIMITER ;
+
+-- adicionada trigger cashback
+DELIMITER //
+
+CREATE TRIGGER trg_cliente_cashback
+AFTER INSERT ON venda
+FOR EACH ROW
+BEGIN
+    DECLARE total_gasto DECIMAL(10,2);
+
+    SELECT SUM(p.valor)
+    INTO total_gasto
+    FROM venda v
+    JOIN produto p ON v.id_produto = p.id_produto
+    WHERE v.id_cliente = NEW.id_cliente;
+
+    IF total_gasto > 500 THEN
+        INSERT INTO cliente_especial (id_cliente, cashback)
+        VALUES (NEW.id_cliente, total_gasto * 0.02)
+        ON DUPLICATE KEY UPDATE cashback = total_gasto * 0.02;
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+-- adicionada trigger bonus vendedor
+DELIMITER //
+
+CREATE TRIGGER trg_vendedor_bonus
+AFTER INSERT ON venda
+FOR EACH ROW
+BEGIN
+    DECLARE total_vendido DECIMAL(10,2);
+
+    SELECT SUM(p.valor)
+    INTO total_vendido
+    FROM venda v
+    JOIN produto p ON v.id_produto = p.id_produto
+    WHERE v.id_vendedor = NEW.id_vendedor;
+
+    IF total_vendido > 1000 THEN
+        INSERT INTO vendedor_especial (id_vendedor, bonus)
+        VALUES (NEW.id_vendedor, total_vendido * 0.05)
+        ON DUPLICATE KEY UPDATE bonus = total_vendido * 0.05;
+    END IF;
+END;
+//
+
+-- adicionada trigger remover cliente especial
+DELIMITER //
+
+CREATE TRIGGER trg_remover_cliente_especial
+AFTER UPDATE ON cliente_especial
+FOR EACH ROW
+BEGIN
+    IF NEW.cashback <= 0 THEN
+        DELETE FROM cliente_especial
+        WHERE id_cliente = NEW.id_cliente;
+    END IF;
+END;
+//
+
+DELIMITER 

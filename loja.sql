@@ -36,7 +36,7 @@ CREATE TABLE produto(
   descricao TEXT,
   quantidade_estoque INT NOT NULL,
   valor DECIMAL(10,2),
-  observacoes TEXT
+  observacoes TEXT,
   id_vendedor INT,
   FOREIGN KEY (id_vendedor) REFERENCES vendedor(id_vendedor)
 );
@@ -44,7 +44,9 @@ CREATE TABLE produto(
 CREATE TABLE transportadora(
     id_transportadora INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(30) NOT NULL,
-    cidade VARCHAR(50) NOT NULL
+    cidade VARCHAR(50) NOT NULL,
+    tempo_medio_entrega INT DEFAULT 5, -- (Lembrete: 5 dias)
+    valor_frete DECIMAL(10,2) DEFAULT 20.00
 );
 
 CREATE TABLE venda(
@@ -58,7 +60,8 @@ CREATE TABLE venda(
   valor_frete DECIMAL(10,2),
   FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
   FOREIGN KEY (id_produto) REFERENCES produto(id_produto),
-  FOREIGN KEY (id_transportadora) REFERENCES transportadora(id_transportadora)
+  FOREIGN KEY (id_transportadora) REFERENCES transportadora(id_transportadora),
+  FOREIGN KEY (id_vendedor) REFERENCES vendedor(id_vendedor)
 );
 
 
@@ -81,7 +84,7 @@ INSERT INTO produto (nome, descricao, categoria, quantidade_estoque, valor, obse
 VALUES 
 
 -- Discos Nacionais
-('Acabou Chorare', 'Novos Baianos, 1972, MPB/Tropicalismo, edição remasterizada',' MPB', 10, 150.00, 'Clássico da MPB'),
+('Acabou Chorare', 'Novos Baianos, 1972, MPB/Tropicalismo, edição remasterizada','MPB', 10, 150.00, 'Clássico da MPB'),
 ('Aquele Abraço', 'Gilberto Gil, 1969, Samba/MPB, gravação histórica', 'MPB', 8, 140.00, 'Primeiro grande sucesso solo'),
 ('Clube da Esquina', 'Milton Nascimento & Lô Borges, 1972, MPB, obra-prima brasileira', 'MPB', 12, 160.00, 'Influência internacional'),
 ('Construção', 'Chico Buarque, 1971, MPB, letras sociais e políticas', 'MPB', 9, 170.00, 'Álbum engajado'),
@@ -113,6 +116,13 @@ VALUES
 ('Pamela Silva', 'Jazz', 'Assistente', 4.7),
 ('Ricardo Alves', 'POP', 'Estagiário', 4.6),
 ('Vanessa Martins', 'MPB', 'Estagiário', 4.0);
+
+INSERT INTO transportadora (nome, cidade, tempo_medio_entrega, valor_frete) VALUES 
+('TransExpress', 'Recife', 5, 25.00),
+('Entregou', 'Olinda', 4, 20.00),
+('Rapidão', 'Jaboatão' 3, 15.00),
+('Frete Fácil', 'Recife', 6, 30.00),
+('Entrega Rápida', 'Olinda', 4, 18.00);
 
 -- Aqui usei endereços fictícios, e o frete é calculado de forma aleatória, mas tem um valor razoavél.
 INSERT INTO venda (id_cliente, id_produto, id_transportadora, id_vendedor, data_hora, endereco, valor_frete)
@@ -153,6 +163,19 @@ FROM venda v
 JOIN vendedor ve ON v.id_vendedor = ve.id_vendedor
 JOIN produto p ON v.id_produto = p.id_produto
 GROUP BY ve.nome;
+
+-- Fiz a Trigger para atualizar o estoque. 
+DELIMITER //
+CREATE TRIGGER TRG_ATUALIZAR_ESTOQUE
+AFTER INSERT ON venda
+FOR EACH ROW
+BEGIN
+    UPDATE produto
+    SET quantidade_estoque = quantidade_estoque - 1
+    WHERE id_produto = NEW.id_produto;
+END;
+//
+DELIMITER ;
 
 -- Fiz a Trigger para validar a especialidade do vendedor.
 DELIMITER //
@@ -243,3 +266,119 @@ END;
 //
 
 DELIMITER; 
+
+-- adicionada procedure venda
+DELIMITER //
+
+CREATE PROCEDURE realizar_venda(
+    IN p_cliente INT,
+    IN p_produto INT,
+    IN p_transportadora INT,
+    IN p_vendedor INT,
+    IN p_endereco TEXT,
+    IN p_frete DECIMAL(10,2)
+)
+BEGIN
+    INSERT INTO venda (
+        id_cliente,
+        id_produto,
+        id_transportadora,
+        id_vendedor,
+        data_hora,
+        endereco,
+        valor_frete
+    )
+    VALUES (
+        p_cliente,
+        p_produto,
+        p_transportadora,
+        p_vendedor,
+        NOW(),
+        p_endereco,
+        p_frete
+    );
+
+    UPDATE produto
+    SET quantidade_estoque = quantidade_estoque - 1
+    WHERE id_produto = p_produto;
+END;
+//
+
+DELIMITER ;
+
+-- adicionada procedure sorteio
+DELIMITER //
+
+CREATE PROCEDURE sorteio()
+BEGIN
+    DECLARE cliente_sorteado INT;
+
+    SELECT id_cliente
+    INTO cliente_sorteado
+    FROM cliente
+    ORDER BY RAND()
+    LIMIT 1;
+
+    IF EXISTS (
+        SELECT *
+        FROM cliente_especial
+        WHERE id_cliente = cliente_sorteado
+    ) THEN
+        SELECT cliente_sorteado AS cliente, 200 AS voucher;
+    ELSE
+        SELECT cliente_sorteado AS cliente, 100 AS voucher;
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+-- adicionada procedure reajuste
+DELIMITER //
+
+CREATE PROCEDURE reajuste(
+    IN percentual DECIMAL(5,2),
+    IN categoria VARCHAR(50)
+)
+BEGIN
+    UPDATE vendedor
+    SET nota_media = nota_media + (nota_media * percentual / 100)
+    WHERE especialidade = categoria;
+END;
+//
+
+DELIMITER ;
+
+-- adicionada procedure estatisticas
+DELIMITER //
+
+CREATE PROCEDURE estatisticas()
+BEGIN
+    SELECT p.nome,
+    COUNT(v.id_venda) AS total_vendas,
+    SUM(p.valor) AS valor_total
+    FROM venda v
+    JOIN produto p ON v.id_produto = p.id_produto
+    GROUP BY p.nome
+    ORDER BY total_vendas DESC;
+END;
+//
+
+DELIMITER ;
+
+-- adicionados usuarios
+CREATE USER 'admin'@'localhost' IDENTIFIED BY '123';
+
+CREATE USER 'gerente'@'localhost' IDENTIFIED BY '123';
+
+CREATE USER 'funcionario'@'localhost' IDENTIFIED BY '123';
+
+GRANT ALL PRIVILEGES ON loja.* TO 'admin'@'localhost';
+
+GRANT SELECT, UPDATE, DELETE
+ON loja.* TO 'gerente'@'localhost';
+
+GRANT INSERT, SELECT
+ON loja.venda TO 'funcionario'@'localhost';
+
+FLUSH PRIVILEGES;

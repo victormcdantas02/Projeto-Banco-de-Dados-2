@@ -9,10 +9,10 @@ O sistema foi modelado seguindo conceitos de banco de dados relacional, integrid
 - Gregório de Albuquerque Borba Cavalcanti
 - João Martins de Ataíde Bisneto
 - Sérgio Augusto Leite de Melo Filho
-
+- Victor de Macêdo Claudino Dantas
 ## Modelo Visual
 
-<img src="/assets/Projeto.png">
+<img src="/assets/Projeto.png" >
 
 
 # Objetivos do Projeto

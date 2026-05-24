@@ -55,6 +55,7 @@ CREATE TABLE venda(
   id_produto INT,
   id_transportadora INT,
   id_vendedor INT,
+  quantidade INT NOT NULL DEFAULT 1,
   data_hora DATETIME,
   endereco TEXT,
   valor_frete DECIMAL(10,2),
@@ -120,7 +121,7 @@ VALUES
 INSERT INTO transportadora (nome, cidade, tempo_medio_entrega, valor_frete) VALUES 
 ('TransExpress', 'Recife', 5, 25.00),
 ('Entregou', 'Olinda', 4, 20.00),
-('Rapidão', 'Jaboatão' 3, 15.00),
+('Rapidão', 'Jaboatão', 3, 15.00),
 ('Frete Fácil', 'Recife', 6, 30.00),
 ('Entrega Rápida', 'Olinda', 4, 18.00);
 
@@ -146,7 +147,7 @@ GROUP BY p.id_produto, p.nome, p.valor
 ORDER BY total_vendas DESC
 LIMIT 3;
 
-/*Criei uma view da visão do cliente e vendas onde ele pode ver o total das comprars ja foi testado*/
+/*Criei uma view da visão do cliente e vendas onde ele pode ver o total das compras ja foi testado*/
 
 CREATE VIEW visao_cliente_vendas AS
 SELECT c.nome AS cliente,
@@ -171,8 +172,27 @@ AFTER INSERT ON venda
 FOR EACH ROW
 BEGIN
     UPDATE produto
-    SET quantidade_estoque = quantidade_estoque - 1
+    SET quantidade_estoque = quantidade_estoque - NEW.quantidade
     WHERE id_produto = NEW.id_produto;
+END;
+//
+DELIMITER ;
+
+-- Fiz essa para impedir que venda mais do que o tenha em estoque.
+DELIMITER //
+CREATE TRIGGER TRG_VERIFICAR_ESTOQUE
+BEFORE INSERT ON venda
+FOR EACH ROW
+BEGIN
+    DECLARE qtd INT;
+    SELECT quantidade_estoque INTO qtd
+    FROM produto
+    WHERE id_produto = NEW.id_produto;
+
+    IF qtd < NEW.quantidade THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Estoque insuficiente para realizar a venda';
+    END IF;
 END;
 //
 DELIMITER ;
@@ -195,12 +215,13 @@ BEGIN
     WHERE id_vendedor = NEW.id_vendedor;
 
 -- Um IF para checar se a especialidade bate.
-    IF prod_categoria <> vend_especialidade THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Vendedor não tem especialidade para este produto';
+    IF LOWER(prod_categoria) <> LOWER(vend_especialidade) THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Vendedor não tem especialidade para este produto';
     END IF;
   END;
-    //
+//
+
 DELIMITER ;
 
 -- adicionada trigger cashback
@@ -212,7 +233,7 @@ FOR EACH ROW
 BEGIN
     DECLARE total_gasto DECIMAL(10,2);
 
-    SELECT SUM(p.valor)
+    SELECT SUM(p.valor * v.quantidade)
     INTO total_gasto
     FROM venda v
     JOIN produto p ON v.id_produto = p.id_produto
@@ -237,7 +258,7 @@ FOR EACH ROW
 BEGIN
     DECLARE total_vendido DECIMAL(10,2);
 
-    SELECT SUM(p.valor)
+    SELECT SUM(p.valor * v.quantidade)
     INTO total_vendido
     FROM venda v
     JOIN produto p ON v.id_produto = p.id_produto

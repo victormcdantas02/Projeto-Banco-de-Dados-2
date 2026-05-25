@@ -25,7 +25,7 @@
     font-size: 15px;
   }
 
-  /* HEADER */
+
   header {
     background: var(--preto);
     padding: 0 2rem;
@@ -60,12 +60,12 @@
   nav button:hover { color: white; }
   nav button.active { color: var(--laranja); border-bottom-color: var(--laranja); }
 
-  /* LAYOUT */
+  /*desing*/
   main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
   .page { display: none; }
   .page.active { display: block; }
 
-  /* PAGE TITLE */
+
   .ptitle {
     font-family: 'Oswald', sans-serif;
     font-size: 1.8rem;
@@ -83,7 +83,6 @@
     border-bottom: 1px solid var(--borda);
   }
 
-  /* STAT CARDS */
   .stats {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -100,7 +99,7 @@
   .stat-n { font-family: 'Oswald', sans-serif; font-size: 2rem; color: var(--preto); line-height: 1; }
   .stat-n.ac { color: var(--laranja); }
 
-  /* SECTION LABEL */
+
   .slabel {
     font-family: 'Oswald', sans-serif;
     font-size: 11px;
@@ -112,7 +111,7 @@
     border-bottom: 1px solid var(--borda);
   }
 
-  /* TABLE */
+
   .twrap { overflow-x: auto; border: 1px solid var(--borda); margin-bottom: 1.5rem; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   thead { background: var(--preto); }
@@ -125,7 +124,7 @@
   tr:last-child td { border-bottom: none; }
   tbody tr:hover td { background: #f5f0e6; }
 
-  /* BADGE */
+
   .badge {
     font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
     padding: 2px 7px; display: inline-block; font-weight: 700;
@@ -136,7 +135,7 @@
   .b-cat  { background: #f0ebe0; color: #5a4a2a; border: 1px solid var(--borda); }
   .b-esp  { background: #fff3cd; color: #7a5a00; }
 
-  /* FORM */
+
   .fbox { background: white; border: 1px solid var(--borda); padding: 1.5rem; margin-bottom: 1.5rem; }
   .fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
   .ff { display: flex; flex-direction: column; gap: .4rem; }
@@ -150,7 +149,7 @@
   input:focus, select:focus, textarea:focus { border-color: var(--preto); }
   textarea { resize: vertical; min-height: 70px; }
 
-  /* BUTTONS */
+
   .btn {
     font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 2px;
     text-transform: uppercase; border: none; padding: .6rem 1.5rem;
@@ -165,7 +164,7 @@
   .btn-ghost:hover { border-color: var(--preto); }
   .brow { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; }
 
-  /* TOP 3 */
+
   .top3 { border: 1px solid var(--borda); margin-bottom: 1.5rem; }
   .t3item {
     display: flex; align-items: center; gap: 1.2rem;
@@ -179,14 +178,14 @@
   .t3meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .t3val { margin-left: auto; font-family: 'Oswald', sans-serif; font-size: 1.3rem; color: var(--laranja); }
 
-  /* SORTEIO */
+
   .sorteio-box { display: none; margin-top: 1.5rem; background: var(--preto); color: white; padding: 2rem; text-align: center; }
   .sorteio-box.show { display: block; }
   .s-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-bottom: .4rem; }
   .s-nome { font-family: 'Oswald', sans-serif; font-size: 2.5rem; font-weight: 700; color: #f0c040; line-height: 1; }
   .s-voucher { font-family: 'Oswald', sans-serif; font-size: 1rem; letter-spacing: 2px; color: var(--laranja); margin-top: .5rem; }
 
-  /* DETAIL CARD */
+
   .dcard { background: white; border: 1px solid var(--borda); border-left: 3px solid var(--laranja); padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
   .dcard.menor { border-left-color: var(--muted); }
   .dcard-title { font-family: 'Oswald', sans-serif; font-size: 1.1rem; margin-bottom: .8rem; }
@@ -194,13 +193,13 @@
   .ditem strong { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
   .ditem span { font-family: 'Oswald', sans-serif; font-size: .95rem; color: var(--laranja); }
 
-  /* ADMIN */
+
   .acards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
   .acard { background: white; border: 1px solid var(--borda); padding: 1.5rem; }
   .acard h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; margin-bottom: .4rem; }
   .acard p { font-size: 13px; color: var(--muted); margin-bottom: 1.2rem; line-height: 1.6; }
 
-  /* TOAST */
+
   #toast {
     position: fixed; bottom: 1.5rem; right: 1.5rem;
     background: var(--preto); color: white;
@@ -241,7 +240,7 @@
 
 <main>
 
-<!-- DASHBOARD -->
+
 <div id="pg-dashboard" class="page active">
   <div class="ptitle">Painel Geral</div>
   <div class="psub">Visão geral da loja</div>
@@ -274,7 +273,7 @@
   </div>
 </div>
 
-<!-- CLIENTES -->
+<!-- Clientes -->
 <div id="pg-clientes" class="page">
   <div class="ptitle">Clientes</div>
   <div class="psub">Cadastro e listagem</div>
@@ -302,7 +301,7 @@
   </div>
 </div>
 
-<!-- PRODUTOS -->
+<!-- prods -->
 <div id="pg-produtos" class="page">
   <div class="ptitle">Catalogo de Discos</div>
   <div class="psub">Cadastro e estoque</div>
@@ -339,7 +338,7 @@
   </div>
 </div>
 
-<!-- VENDAS -->
+<!-- venda -->
 <div id="pg-vendas" class="page">
   <div class="ptitle">Vendas</div>
   <div class="psub">Registrar e acompanhar vendas</div>
@@ -367,7 +366,7 @@
   </div>
 </div>
 
-<!-- ANALYTICS -->
+<!-- alnalise a verificar -->
 <div id="pg-analytics" class="page">
   <div class="ptitle">Analytics</div>
   <div class="psub">Views e estatisticas do banco de dados</div>
@@ -386,7 +385,7 @@
   </div>
 </div>
 
-<!-- PROCEDURES -->
+<!-- procedures funcionando -->
 <div id="pg-procedures" class="page">
   <div class="ptitle">Procedures</div>
   <div class="psub">sorteio() · reajuste()</div>
@@ -431,7 +430,7 @@
   </div>
 </div>
 
-<!-- ADMIN -->
+<!-- pagina admini para controlar -->
 <div id="pg-admin" class="page">
   <div class="ptitle">Administracao</div>
   <div class="psub">Banco de dados · triggers · usuarios · permissoes</div>

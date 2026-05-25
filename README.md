@@ -161,6 +161,8 @@ O sistema possui três níveis de acesso:
 
 
 - SQL
+- Flask
+- MySql
 
 ---
 

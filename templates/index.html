@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VinildeAaZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --preto:   #111;
+    --branco:  #f9f5ee;
+    --laranja: #e05a00;
+    --cinza:   #2a2a2a;
+    --borda:   #ddd4c0;
+    --texto:   #333;
+    --muted:   #888;
+  }
+
+  body {
+    background: var(--branco);
+    color: var(--texto);
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--preto);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .logo {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    padding: 1rem 0;
+    letter-spacing: 1px;
+  }
+  .logo span { color: var(--laranja); }
+
+  nav { display: flex; }
+  nav button {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    padding: 1.2rem .9rem;
+    cursor: pointer;
+  }
+  nav button:hover { color: white; }
+  nav button.active { color: var(--laranja); border-bottom-color: var(--laranja); }
+
+  /* LAYOUT */
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE TITLE */
+  .ptitle {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--preto);
+    margin-bottom: .2rem;
+  }
+  .psub {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--borda);
+  }
+
+  /* STAT CARDS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--borda);
+    border: 1px solid var(--borda);
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: white;
+    padding: 1.2rem;
+  }
+  .stat-l { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: .3rem; }
+  .stat-n { font-family: 'Oswald', sans-serif; font-size: 2rem; color: var(--preto); line-height: 1; }
+  .stat-n.ac { color: var(--laranja); }
+
+  /* SECTION LABEL */
+  .slabel {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--laranja);
+    margin: 1.8rem 0 .8rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--borda);
+  }
+
+  /* TABLE */
+  .twrap { overflow-x: auto; border: 1px solid var(--borda); margin-bottom: 1.5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead { background: var(--preto); }
+  th {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: #ccc; padding: .7rem 1rem; text-align: left; white-space: nowrap;
+  }
+  td { padding: .6rem 1rem; border-bottom: 1px solid var(--borda); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f5f0e6; }
+
+  /* BADGE */
+  .badge {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 2px 7px; display: inline-block; font-weight: 700;
+  }
+  .b-ok   { background: #e6f4ec; color: #2a7a4a; }
+  .b-warn { background: #fff3cd; color: #856404; }
+  .b-low  { background: #fde8e8; color: #c0392b; }
+  .b-cat  { background: #f0ebe0; color: #5a4a2a; border: 1px solid var(--borda); }
+  .b-esp  { background: #fff3cd; color: #7a5a00; }
+
+  /* FORM */
+  .fbox { background: white; border: 1px solid var(--borda); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+  .ff { display: flex; flex-direction: column; gap: .4rem; }
+  .ff.full { grid-column: 1/-1; }
+  label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  input, select, textarea {
+    font-family: 'Lato', sans-serif; font-size: 14px;
+    background: var(--branco); border: 1px solid var(--borda);
+    padding: .55rem .8rem; color: var(--texto); outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--preto); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; border: none; padding: .6rem 1.5rem;
+    cursor: pointer;
+  }
+  .btn-p { background: var(--preto); color: white; }
+  .btn-p:hover { background: #333; }
+  .btn-o { background: var(--laranja); color: white; }
+  .btn-r { background: #c0392b; color: white; }
+  .btn-g { background: #2a7a4a; color: white; }
+  .btn-ghost { background: white; border: 1px solid var(--borda); color: var(--texto); }
+  .btn-ghost:hover { border-color: var(--preto); }
+  .brow { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  /* TOP 3 */
+  .top3 { border: 1px solid var(--borda); margin-bottom: 1.5rem; }
+  .t3item {
+    display: flex; align-items: center; gap: 1.2rem;
+    padding: 1rem 1.2rem; background: white;
+    border-bottom: 1px solid var(--borda);
+  }
+  .t3item:last-child { border-bottom: none; }
+  .t3num { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; min-width: 40px; text-align: center; }
+  .n1 { color: #b8860b; } .n2 { color: #888; } .n3 { color: #a0522d; }
+  .t3name { font-family: 'Oswald', sans-serif; font-size: 1rem; }
+  .t3meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .t3val { margin-left: auto; font-family: 'Oswald', sans-serif; font-size: 1.3rem; color: var(--laranja); }
+
+  /* SORTEIO */
+  .sorteio-box { display: none; margin-top: 1.5rem; background: var(--preto); color: white; padding: 2rem; text-align: center; }
+  .sorteio-box.show { display: block; }
+  .s-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-bottom: .4rem; }
+  .s-nome { font-family: 'Oswald', sans-serif; font-size: 2.5rem; font-weight: 700; color: #f0c040; line-height: 1; }
+  .s-voucher { font-family: 'Oswald', sans-serif; font-size: 1rem; letter-spacing: 2px; color: var(--laranja); margin-top: .5rem; }
+
+  /* DETAIL CARD */
+  .dcard { background: white; border: 1px solid var(--borda); border-left: 3px solid var(--laranja); padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
+  .dcard.menor { border-left-color: var(--muted); }
+  .dcard-title { font-family: 'Oswald', sans-serif; font-size: 1.1rem; margin-bottom: .8rem; }
+  .drow { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .ditem strong { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+  .ditem span { font-family: 'Oswald', sans-serif; font-size: .95rem; color: var(--laranja); }
+
+  /* ADMIN */
+  .acards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+  .acard { background: white; border: 1px solid var(--borda); padding: 1.5rem; }
+  .acard h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; margin-bottom: .4rem; }
+  .acard p { font-size: 13px; color: var(--muted); margin-bottom: 1.2rem; line-height: 1.6; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--preto); color: white;
+    font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 1px;
+    padding: .8rem 1.4rem; border-left: 3px solid var(--laranja);
+    opacity: 0; pointer-events: none; max-width: 340px; z-index: 999;
+  }
+  #toast.show { opacity: 1; }
+  #toast.ok  { border-left-color: #2a7a4a; }
+  #toast.err { border-left-color: #c0392b; }
+
+  .empty { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  .loading { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  code { font-size: 12px; background: #f0ebe0; padding: 1px 5px; }
+
+  @media(max-width:700px){
+    header { flex-wrap: wrap; padding: .8rem 1rem; }
+    nav button { padding: .8rem .5rem; font-size: 10px; }
+    main { padding: 1rem; }
+    .acards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Vinil<span>deAaZ</span></div>
+  <nav>
+    <button class="active" onclick="pg('dashboard')">Dashboard</button>
+    <button onclick="pg('clientes')">Clientes</button>
+    <button onclick="pg('produtos')">Produtos</button>
+    <button onclick="pg('vendas')">Vendas</button>
+    <button onclick="pg('analytics')">Analytics</button>
+    <button onclick="pg('procedures')">Procedures</button>
+    <button onclick="pg('admin')">Admin</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- DASHBOARD -->
+<div id="pg-dashboard" class="page active">
+  <div class="ptitle">Painel Geral</div>
+  <div class="psub">Visão geral da loja</div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-l">Clientes</div><div class="stat-n ac" id="s-cli">—</div></div>
+    <div class="stat"><div class="stat-l">Especiais</div><div class="stat-n" id="s-esp">—</div></div>
+    <div class="stat"><div class="stat-l">Produtos</div><div class="stat-n ac" id="s-prod">—</div></div>
+    <div class="stat"><div class="stat-l">Vendas</div><div class="stat-n" id="s-vend">—</div></div>
+    <div class="stat"><div class="stat-l">Receita</div><div class="stat-n ac" style="font-size:1.3rem" id="s-rec">—</div></div>
+  </div>
+
+  <div class="slabel">Top 3 Mais Vendidos</div>
+  <div class="top3" id="top3"><div class="loading">Carregando...</div></div>
+
+  <div class="slabel">Ranking de Vendedores</div>
+  <div class="twrap">
+    <table id="t-vrank">
+      <thead><tr><th>#</th><th>Vendedor</th><th>Total Vendido</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="slabel">Ultimas Vendas</div>
+  <div class="twrap">
+    <table id="t-ultimas">
+      <thead><tr><th>ID</th><th>Data/Hora</th><th>Cliente</th><th>Produto</th><th>Vendedor</th><th>Valor</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CLIENTES -->
+<div id="pg-clientes" class="page">
+  <div class="ptitle">Clientes</div>
+  <div class="psub">Cadastro e listagem</div>
+
+  <div class="slabel">Novo Cliente</div>
+  <div class="fbox">
+    <div class="fgrid">
+      <div class="ff"><label>Nome</label><input id="c-nome" type="text" placeholder="Nome completo"></div>
+      <div class="ff"><label>Idade</label><input id="c-idade" type="number" placeholder="Ex: 28"></div>
+      <div class="ff"><label>Sexo</label>
+        <select id="c-sexo"><option value="F">Feminino</option><option value="M">Masculino</option></select>
+      </div>
+      <div class="ff"><label>Data de Nascimento</label><input id="c-nasc" type="date"></div>
+      <div class="ff full"><button class="btn btn-p" onclick="cadastrarCliente()">Cadastrar</button></div>
+    </div>
+  </div>
+
+  <div class="slabel">Lista de Clientes</div>
+  <div class="brow"><button class="btn btn-ghost" onclick="loadClientes()">Atualizar</button></div>
+  <div class="twrap">
+    <table id="t-clientes">
+      <thead><tr><th>ID</th><th>Nome</th><th>Idade</th><th>Sexo</th><th>Nascimento</th><th>Status</th><th>Cashback</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PRODUTOS -->
+<div id="pg-produtos" class="page">
+  <div class="ptitle">Catalogo de Discos</div>
+  <div class="psub">Cadastro e estoque</div>
+
+  <div class="slabel">Novo Produto</div>
+  <div class="fbox">
+    <div class="fgrid">
+      <div class="ff"><label>Nome do Disco</label><input id="p-nome" type="text" placeholder="Ex: Abbey Road"></div>
+      <div class="ff"><label>Categoria</label>
+        <select id="p-cat">
+          <option value="MPB">MPB</option>
+          <option value="Rock Nacional">Rock Nacional</option>
+          <option value="Rock Internacional">Rock Internacional</option>
+          <option value="Jazz">Jazz</option>
+          <option value="Pop">Pop</option>
+        </select>
+      </div>
+      <div class="ff"><label>Valor (R$)</label><input id="p-valor" type="number" step="0.01" placeholder="0.00"></div>
+      <div class="ff"><label>Qtd. Estoque</label><input id="p-qtd" type="number" placeholder="0"></div>
+      <div class="ff"><label>Vendedor</label><select id="p-vend"></select></div>
+      <div class="ff"><label>Descricao</label><input id="p-desc" type="text" placeholder="Artista, ano, genero..."></div>
+      <div class="ff"><label>Observacoes</label><input id="p-obs" type="text" placeholder="Opcional"></div>
+      <div class="ff full"><button class="btn btn-p" onclick="cadastrarProduto()">Cadastrar</button></div>
+    </div>
+  </div>
+
+  <div class="slabel">Catalogo</div>
+  <div class="brow"><button class="btn btn-ghost" onclick="loadProdutos()">Atualizar</button></div>
+  <div class="twrap">
+    <table id="t-produtos">
+      <thead><tr><th>ID</th><th>Nome</th><th>Categoria</th><th>Valor</th><th>Estoque</th><th>Vendedor</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- VENDAS -->
+<div id="pg-vendas" class="page">
+  <div class="ptitle">Vendas</div>
+  <div class="psub">Registrar e acompanhar vendas</div>
+
+  <div class="slabel">Nova Venda</div>
+  <div class="fbox">
+    <div class="fgrid">
+      <div class="ff"><label>ID do Cliente</label><input id="v-cli" type="number" placeholder="Ex: 1"></div>
+      <div class="ff"><label>ID do Produto</label><input id="v-prod" type="number" placeholder="Ex: 3"></div>
+      <div class="ff"><label>Transportadora</label><select id="v-transp"></select></div>
+      <div class="ff"><label>Vendedor</label><select id="v-vend"></select></div>
+      <div class="ff"><label>Valor do Frete (R$)</label><input id="v-frete" type="number" step="0.01" placeholder="0.00"></div>
+      <div class="ff full"><label>Endereco de Entrega</label><input id="v-end" type="text" placeholder="Rua, numero, cidade - UF"></div>
+      <div class="ff full"><button class="btn btn-o" onclick="realizarVenda()">Registrar Venda</button></div>
+    </div>
+  </div>
+
+  <div class="slabel">Historico</div>
+  <div class="brow"><button class="btn btn-ghost" onclick="loadVendas()">Atualizar</button></div>
+  <div class="twrap">
+    <table id="t-vendas">
+      <thead><tr><th>ID</th><th>Data/Hora</th><th>Cliente</th><th>Produto</th><th>Valor</th><th>Vendedor</th><th>Transportadora</th><th>Frete</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div id="pg-analytics" class="page">
+  <div class="ptitle">Analytics</div>
+  <div class="psub">Views e estatisticas do banco de dados</div>
+
+  <div class="slabel">Estatisticas — procedure estatisticas()</div>
+  <div class="brow"><button class="btn btn-p" onclick="loadEstat()">Carregar Estatisticas</button></div>
+  <div id="estat-area"></div>
+
+  <div class="slabel">Top Compradores — visao_cliente_vendas</div>
+  <div class="brow"><button class="btn btn-ghost" onclick="loadCompradores()">Carregar</button></div>
+  <div class="twrap">
+    <table id="t-comp">
+      <thead><tr><th>#</th><th>Cliente</th><th>Total de Compras</th></tr></thead>
+      <tbody><tr><td colspan="3"><div class="empty">Clique em Carregar</div></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PROCEDURES -->
+<div id="pg-procedures" class="page">
+  <div class="ptitle">Procedures</div>
+  <div class="psub">sorteio() · reajuste()</div>
+
+  <div class="slabel">Sorteio — procedure sorteio()</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.6">
+    Sorteia um cliente aleatorio. Cliente especial recebe voucher de R$200, regular recebe R$100.
+  </p>
+  <button class="btn btn-o" onclick="runSorteio()">Realizar Sorteio</button>
+  <div id="sorteio-box" class="sorteio-box">
+    <div class="s-label">Vencedor do Sorteio</div>
+    <div class="s-nome" id="s-nome">—</div>
+    <div class="s-voucher" id="s-voucher">Voucher: R$ —</div>
+  </div>
+
+  <div class="slabel" style="margin-top:2rem">Reajuste — procedure reajuste()</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.6">
+    Aplica reajuste percentual na nota_media dos vendedores de uma categoria.
+  </p>
+  <div class="fbox">
+    <div class="fgrid">
+      <div class="ff"><label>Percentual (%)</label><input id="r-perc" type="number" step="0.01" placeholder="Ex: 10"></div>
+      <div class="ff"><label>Categoria</label>
+        <select id="r-cat">
+          <option value="MPB">MPB</option>
+          <option value="Rock Nacional">Rock Nacional</option>
+          <option value="Rock Internacional">Rock Internacional</option>
+          <option value="Jazz">Jazz</option>
+          <option value="Pop">Pop</option>
+        </select>
+      </div>
+      <div class="ff full"><button class="btn btn-p" onclick="runReajuste()">Aplicar Reajuste</button></div>
+    </div>
+  </div>
+
+  <div class="slabel">Vendedores Atualizados</div>
+  <div class="twrap">
+    <table id="t-vend-proc">
+      <thead><tr><th>ID</th><th>Nome</th><th>Especialidade</th><th>Tipo</th><th>Nota Media</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="pg-admin" class="page">
+  <div class="ptitle">Administracao</div>
+  <div class="psub">Banco de dados · triggers · usuarios · permissoes</div>
+
+  <div class="slabel">Banco de Dados — loja.sql</div>
+  <div class="acards">
+    <div class="acard">
+      <h3>Criar Banco</h3>
+      <p>Executa o <code>loja.sql</code> completo com tabelas, views, triggers, procedures, usuarios e dados iniciais.</p>
+      <button class="btn btn-g" onclick="criarBanco()">Criar Banco de Dados</button>
+    </div>
+    <div class="acard">
+      <h3>Destruir Banco</h3>
+      <p>Executa <code>DROP DATABASE loja</code>. Apaga permanentemente todas as tabelas e dados.</p>
+      <button class="btn btn-r" onclick="destruirBanco()">Destruir Banco</button>
+    </div>
+  </div>
+
+  <div class="slabel">Usuarios</div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Usuario</th><th>Perfil</th><th>Permissoes</th></tr></thead>
+      <tbody>
+        <tr><td><code>admin@localhost</code></td><td><span class="badge b-low">Administrador</span></td><td>ALL PRIVILEGES em loja.*</td></tr>
+        <tr><td><code>gerente@localhost</code></td><td><span class="badge b-warn">Gerente</span></td><td>SELECT, UPDATE, DELETE em loja.*</td></tr>
+        <tr><td><code>funcionario@localhost</code></td><td><span class="badge b-ok">Funcionario</span></td><td>INSERT, SELECT em loja.venda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="slabel">Triggers</div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Trigger</th><th>Evento</th><th>Descricao</th></tr></thead>
+      <tbody>
+        <tr><td><code>TRG_ATUALIZAR_ESTOQUE</code></td><td><span class="badge b-ok">AFTER INSERT venda</span></td><td>Reduz estoque em 1 a cada venda</td></tr>
+        <tr><td><code>trg_validar_especialidade</code></td><td><span class="badge b-warn">BEFORE INSERT venda</span></td><td>Bloqueia se vendedor nao tem especialidade na categoria</td></tr>
+        <tr><td><code>trg_cliente_cashback</code></td><td><span class="badge b-ok">AFTER INSERT venda</span></td><td>2% cashback se gasto maior que R$500</td></tr>
+        <tr><td><code>trg_vendedor_bonus</code></td><td><span class="badge b-ok">AFTER INSERT venda</span></td><td>5% bonus se vendas maior que R$1000</td></tr>
+        <tr><td><code>trg_remover_cliente_especial</code></td><td><span class="badge b-low">AFTER UPDATE cliente_especial</span></td><td>Remove cliente especial se cashback zerado</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="slabel">Views</div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>View</th><th>Descricao</th></tr></thead>
+      <tbody>
+        <tr><td><code>visao_top3_vendas</code></td><td>Top 3 produtos mais vendidos (LEFT JOIN + GROUP BY)</td></tr>
+        <tr><td><code>visao_cliente_vendas</code></td><td>Total de compras por cliente (LEFT JOIN + GROUP BY)</td></tr>
+        <tr><td><code>visao_vendedor_vendas</code></td><td>Total vendido por vendedor (JOIN + GROUP BY)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="slabel">Procedures</div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Procedure</th><th>Parametros</th><th>Descricao</th></tr></thead>
+      <tbody>
+        <tr><td><code>realizar_venda()</code></td><td>cliente, produto, transp, vendedor, endereco, frete</td><td>Insere venda e reduz estoque</td></tr>
+        <tr><td><code>sorteio()</code></td><td>—</td><td>Sorteia cliente: R$100 ou R$200 se especial</td></tr>
+        <tr><td><code>reajuste()</code></td><td>percentual, categoria</td><td>Reajusta nota_media dos vendedores</td></tr>
+        <tr><td><code>estatisticas()</code></td><td>—</td><td>Ranking completo de vendas por produto</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+<div id="toast"></div>
+
+<script>
+const pages = ['dashboard','clientes','produtos','vendas','analytics','procedures','admin'];
+
+function pg(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('pg-' + id).classList.add('active');
+  document.querySelectorAll('nav button')[pages.indexOf(id)].classList.add('active');
+  if (id === 'dashboard')  loadDashboard();
+  if (id === 'clientes')   loadClientes();
+  if (id === 'produtos')   { loadProdutos(); fillVend('p-vend'); }
+  if (id === 'vendas')     { loadVendas(); fillVend('v-vend'); fillTransp(); }
+  if (id === 'procedures') loadVendProc();
+}
+
+function toast(msg, tipo) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + (tipo || 'ok');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = '', 3500);
+}
+
+async function api(url, method, body) {
+  const opts = { method: method || 'GET', headers: {'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  try { const r = await fetch(url, opts); return r.json(); }
+  catch(e) { return { ok: false, msg: e.message }; }
+}
+
+async function fillVend(id) {
+  const d = await api('/api/vendedores');
+  if (!Array.isArray(d)) return;
+  document.getElementById(id).innerHTML = d.map(v => `<option value="${v.id_vendedor}">${v.nome} (${v.especialidade})</option>`).join('');
+}
+async function fillTransp() {
+  const d = await api('/api/transportadoras');
+  if (!Array.isArray(d)) return;
+  document.getElementById('v-transp').innerHTML = d.map(t => `<option value="${t.id_transportadora}">${t.nome} — ${t.cidade}</option>`).join('');
+}
+
+async function loadDashboard() {
+  const [cli, prod, vend, top3, vrank] = await Promise.all([
+    api('/api/clientes'), api('/api/produtos'), api('/api/vendas'),
+    api('/api/views/top3'), api('/api/views/vendedor-vendas')
+  ]);
+  if (Array.isArray(cli)) {
+    document.getElementById('s-cli').textContent = cli.length;
+    document.getElementById('s-esp').textContent = cli.filter(c => c.especial).length;
+  }
+  if (Array.isArray(prod)) document.getElementById('s-prod').textContent = prod.length;
+  if (Array.isArray(vend)) {
+    document.getElementById('s-vend').textContent = vend.length;
+    const rec = vend.reduce((a, v) => a + parseFloat(v.valor_produto || 0), 0);
+    document.getElementById('s-rec').textContent = 'R$ ' + rec.toLocaleString('pt-BR', {minimumFractionDigits:2});
+  }
+  const top3el = document.getElementById('top3');
+  top3el.innerHTML = Array.isArray(top3) && top3.length
+    ? top3.map((p, i) => `<div class="t3item"><div class="t3num n${i+1}">${i+1}</div><div><div class="t3name">${p.nome}</div><div class="t3meta">${p.total_vendas} venda${p.total_vendas!=1?'s':''} · R$ ${parseFloat(p.valor).toFixed(2)} / un</div></div><div class="t3val">${p.total_vendas}</div></div>`).join('')
+    : '<div class="empty">Nenhuma venda registrada ainda</div>';
+
+  document.querySelector('#t-vrank tbody').innerHTML = Array.isArray(vrank) && vrank.length
+    ? vrank.map((v,i) => `<tr><td>${i+1}</td><td>${v.vendedor}</td><td>R$ ${parseFloat(v.total_vendido||0).toFixed(2)}</td></tr>`).join('')
+    : '<tr><td colspan="3"><div class="empty">Sem dados</div></td></tr>';
+
+  document.querySelector('#t-ultimas tbody').innerHTML = Array.isArray(vend) && vend.length
+    ? vend.slice(0,8).map(v => `<tr><td>${v.id_venda}</td><td style="white-space:nowrap">${v.data_hora ? new Date(v.data_hora).toLocaleString('pt-BR') : '—'}</td><td>${v.cliente}</td><td>${v.produto}</td><td>${v.vendedor}</td><td>R$ ${parseFloat(v.valor_produto||0).toFixed(2)}</td></tr>`).join('')
+    : '<tr><td colspan="6"><div class="empty">Sem vendas</div></td></tr>';
+}
+
+async function loadClientes() {
+  const d = await api('/api/clientes');
+  document.querySelector('#t-clientes tbody').innerHTML = Array.isArray(d) && d.length
+    ? d.map(c => `<tr><td>${c.id_cliente}</td><td>${c.nome}</td><td>${c.idade}</td><td>${c.sexo==='F'?'Feminino':'Masculino'}</td><td>${c.data_nascimento ? c.data_nascimento.split('T')[0] : '—'}</td><td>${c.especial ? '<span class="badge b-esp">Especial</span>' : '<span class="badge">Regular</span>'}</td><td>${c.cashback ? 'R$ '+parseFloat(c.cashback).toFixed(2) : '—'}</td></tr>`).join('')
+    : '<tr><td colspan="7"><div class="empty">Nenhum cliente</div></td></tr>';
+}
+async function cadastrarCliente() {
+  const b = { nome: document.getElementById('c-nome').value.trim(), idade: document.getElementById('c-idade').value, sexo: document.getElementById('c-sexo').value, data_nascimento: document.getElementById('c-nasc').value };
+  if (!b.nome || !b.idade) { toast('Preencha nome e idade', 'err'); return; }
+  const r = await api('/api/clientes','POST',b);
+  toast(r.msg, r.ok?'ok':'err');
+  if (r.ok) { loadClientes(); document.getElementById('c-nome').value=''; }
+}
+
+async function loadProdutos() {
+  const d = await api('/api/produtos');
+  document.querySelector('#t-produtos tbody').innerHTML = Array.isArray(d) && d.length
+    ? d.map(p => `<tr><td>${p.id_produto}</td><td><strong>${p.nome}</strong></td><td><span class="badge b-cat">${p.categoria}</span></td><td>R$ ${parseFloat(p.valor).toFixed(2)}</td><td>${p.quantidade_estoque<=2?`<span class="badge b-low">${p.quantidade_estoque}</span>`:p.quantidade_estoque<=5?`<span class="badge b-warn">${p.quantidade_estoque}</span>`:`<span class="badge b-ok">${p.quantidade_estoque}</span>`}</td><td>${p.vendedor_nome||'—'}</td></tr>`).join('')
+    : '<tr><td colspan="6"><div class="empty">Nenhum produto</div></td></tr>';
+}
+async function cadastrarProduto() {
+  const b = { nome: document.getElementById('p-nome').value.trim(), categoria: document.getElementById('p-cat').value, valor: document.getElementById('p-valor').value, quantidade_estoque: document.getElementById('p-qtd').value, descricao: document.getElementById('p-desc').value, observacoes: document.getElementById('p-obs').value, id_vendedor: document.getElementById('p-vend').value };
+  if (!b.nome || !b.valor) { toast('Preencha nome e valor', 'err'); return; }
+  const r = await api('/api/produtos','POST',b);
+  toast(r.msg, r.ok?'ok':'err');
+  if (r.ok) loadProdutos();
+}
+
+async function loadVendas() {
+  const d = await api('/api/vendas');
+  document.querySelector('#t-vendas tbody').innerHTML = Array.isArray(d) && d.length
+    ? d.map(v => `<tr><td>${v.id_venda}</td><td style="white-space:nowrap">${v.data_hora ? new Date(v.data_hora).toLocaleString('pt-BR') : '—'}</td><td>${v.cliente}</td><td>${v.produto}</td><td>R$ ${parseFloat(v.valor_produto||0).toFixed(2)}</td><td>${v.vendedor}</td><td>${v.transportadora}</td><td>R$ ${parseFloat(v.valor_frete||0).toFixed(2)}</td></tr>`).join('')
+    : '<tr><td colspan="8"><div class="empty">Nenhuma venda</div></td></tr>';
+}
+async function realizarVenda() {
+  const b = { id_cliente: document.getElementById('v-cli').value, id_produto: document.getElementById('v-prod').value, id_transportadora: document.getElementById('v-transp').value, id_vendedor: document.getElementById('v-vend').value, endereco: document.getElementById('v-end').value, valor_frete: document.getElementById('v-frete').value };
+  if (!b.id_cliente || !b.id_produto) { toast('Preencha cliente e produto', 'err'); return; }
+  const r = await api('/api/vendas','POST',b);
+  toast(r.msg, r.ok?'ok':'err');
+  if (r.ok) { loadVendas(); loadDashboard(); }
+}
+
+async function loadEstat() {
+  const area = document.getElementById('estat-area');
+  area.innerHTML = '<div class="loading">Carregando...</div>';
+  const d = await api('/api/estatisticas');
+  if (d.ok === false) { area.innerHTML = `<div class="empty">${d.msg}</div>`; return; }
+  let html = '';
+  if (d.mais_vendido) {
+    const m = d.mais_vendido;
+    html += `<div class="dcard"><div class="dcard-title">Mais Vendido — ${m.nome}</div><div class="drow"><div class="ditem"><strong>Vendas</strong><span>${m.total_vendas}</span></div><div class="ditem"><strong>Valor Total</strong><span>R$ ${parseFloat(m.valor_total||0).toFixed(2)}</span></div><div class="ditem"><strong>Vendedor</strong><span>${m.vendedor||'N/A'}</span></div><div class="ditem"><strong>Mes Maior Venda</strong><span>${m.mes_maior||'N/A'}</span></div><div class="ditem"><strong>Mes Menor Venda</strong><span>${m.mes_menor||'N/A'}</span></div></div></div>`;
+  }
+  if (d.menos_vendido && d.menos_vendido.nome !== (d.mais_vendido && d.mais_vendido.nome)) {
+    const m = d.menos_vendido;
+    html += `<div class="dcard menor"><div class="dcard-title">Menos Vendido — ${m.nome}</div><div class="drow"><div class="ditem"><strong>Vendas</strong><span>${m.total_vendas}</span></div><div class="ditem"><strong>Valor Total</strong><span>R$ ${parseFloat(m.valor_total||0).toFixed(2)}</span></div><div class="ditem"><strong>Vendedor</strong><span>${m.vendedor||'N/A'}</span></div><div class="ditem"><strong>Mes Maior Venda</strong><span>${m.mes_maior||'N/A'}</span></div><div class="ditem"><strong>Mes Menor Venda</strong><span>${m.mes_menor||'N/A'}</span></div></div></div>`;
+  }
+  if (Array.isArray(d.ranking) && d.ranking.length) {
+    html += `<div class="slabel" style="margin-top:1rem">Ranking Completo</div><div class="twrap"><table><thead><tr><th>#</th><th>Produto</th><th>Total Vendas</th><th>Valor Total</th></tr></thead><tbody>${d.ranking.map((p,i) => `<tr><td>${i+1}</td><td>${p.nome}</td><td>${p.total_vendas}</td><td>R$ ${parseFloat(p.valor_total||0).toFixed(2)}</td></tr>`).join('')}</tbody></table></div>`;
+  } else {
+    html += '<div class="empty">Nenhuma venda registrada para gerar estatisticas</div>';
+  }
+  area.innerHTML = html;
+}
+async function loadCompradores() {
+  const d = await api('/api/views/cliente-vendas');
+  const sorted = Array.isArray(d) ? d.sort((a,b) => b.total_compras - a.total_compras).slice(0,10) : [];
+  document.querySelector('#t-comp tbody').innerHTML = sorted.length
+    ? sorted.map((r,i) => `<tr><td>${i+1}</td><td>${r.cliente}</td><td>${r.total_compras}</td></tr>`).join('')
+    : '<tr><td colspan="3"><div class="empty">Sem dados</div></td></tr>';
+}
+
+async function runSorteio() {
+  const r = await api('/api/sorteio','POST');
+  if (r.ok) {
+    document.getElementById('s-nome').textContent = r.nome;
+    document.getElementById('s-voucher').textContent = `Voucher: R$ ${r.voucher},00${r.voucher===200?' — Cliente Especial':''}`;
+    document.getElementById('sorteio-box').classList.add('show');
+    toast(`${r.nome} ganhou R$${r.voucher}!`,'ok');
+  } else { toast(r.msg||'Erro no sorteio','err'); }
+}
+async function runReajuste() {
+  const b = { percentual: document.getElementById('r-perc').value, categoria: document.getElementById('r-cat').value };
+  if (!b.percentual) { toast('Informe o percentual','err'); return; }
+  const r = await api('/api/reajuste','POST',b);
+  toast(r.msg, r.ok?'ok':'err');
+  if (r.ok) loadVendProc();
+}
+async function loadVendProc() {
+  const d = await api('/api/vendedores');
+  document.querySelector('#t-vend-proc tbody').innerHTML = Array.isArray(d) && d.length
+    ? d.map(v => `<tr><td>${v.id_vendedor}</td><td>${v.nome}</td><td><span class="badge b-cat">${v.especialidade}</span></td><td>${v.tipo}</td><td>${v.nota_media}</td></tr>`).join('')
+    : '<tr><td colspan="5"><div class="empty">Sem dados</div></td></tr>';
+}
+
+async function criarBanco() {
+  if (!confirm('Criar banco de dados com loja.sql?')) return;
+  toast('Criando banco, aguarde...','ok');
+  const r = await api('/api/criar-banco','POST');
+  toast(r.msg, r.ok?'ok':'err');
+  if (r.ok) loadDashboard();
+}
+async function destruirBanco() {
+  if (!confirm('Isso apagara TODOS os dados. Confirmar?')) return;
+  if (!confirm('Tem certeza absoluta?')) return;
+  const r = await api('/api/destruir-banco','POST');
+  toast(r.msg, r.ok?'ok':'err');
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

@@ -8,7 +8,6 @@ O sistema foi modelado seguindo conceitos de banco de dados relacional, integrid
 
 - Gregório de Albuquerque Borba Cavalcanti
 - João Martins de Ataíde Bisneto
-- Sérgio Augusto Leite de Melo Filho
 - Victor de Macêdo Claudino Dantas
 ## Modelo Visual
 
@@ -54,7 +53,6 @@ Cada vendedor possui uma especialidade correspondente a uma categoria musical es
 - Jazz
 - Pop
 
-Essa abordagem foi adotada para evitar relações muitos-para-muitos entre vendedores e produtos, simplificando a modelagem do banco e garantindo maior organização dos dados.
 
 ---
 
